@@ -17,5 +17,22 @@ class RegsiterView(ApiView):
         return Response(serilaizer.errors,status=status.HTTP_400_BAD_REQUEST)
 
     
-class ToDoListCreate(APIView)
+class ToDoListCreate(APIView):
+    permission_classes=[permissions.IsAuthenticated]
+
+    def get(self,request):
+        todos=Todo.objects.filter(user=request.user)
+        serilaizer=ToDoSeriailizer(todos,many=True)
+        return Response(serilaizer.data,status=status.HTTP_200_OK)
+
+    def post(self,request):
+        serilaizer=ToDoSeriailizer(data=request.data)
+        if serilaizer.is_valid():
+            serilaizer.save(user=request.user)
+            return Response(serilaizer.data,status=status.HTTP_201_CREATED)
+        return Response(serilaizer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+
 
